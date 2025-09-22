@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Learner Survey — Jaya</title>
   <!-- Optional: set your Apps Script endpoint here so no code change is needed -->
-  <meta name="apps-script-url" content="https://script.google.com/macros/s/AKfycbxA42gLgI5E-OAyDXRzYKBrHH2jqw2AtQQn_TpFcmwNm58BdJzn36mSLtstKchob69S/exec">
+  <!-- <meta name="apps-script-url" content="https://script.google.com/macros/s/DEPLOYMENT_ID/exec"> -->
 
   <!-- Tailwind via CDN for red/black/white theme -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -362,7 +362,26 @@
       const payload = { ...values, timestamp: new Date().toISOString() };
       try {
         nextBtn.disabled = true;
-        const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        // Avoid CORS preflight by sending URL-encoded form data (simple request)
+        const formBody = new URLSearchParams({ data: JSON.stringify(payload) }).toString();
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+          body: formBody
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        card.classList.add('hidden');
+        done.classList.remove('hidden');
+      } catch (e) {
+        alert('Save failed. ' + (e && e.message ? e.message : 'Check endpoint and CORS.'));
+      } finally {
+        nextBtn.disabled = false;
+      }
+    }
+      const payload = { ...values, timestamp: new Date().toISOString() };
+      try {
+        nextBtn.disabled = true;
+        const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
         if (!res.ok) throw new Error('HTTP ' + res.status);
         card.classList.add('hidden');
         done.classList.remove('hidden');
@@ -440,17 +459,19 @@
     } catch {}
   </script>
 
-  <!-- NOTE: Your Apps Script must accept POST JSON. Example:
+  <!-- NOTE: Your Apps Script must accept POST form data. Example:
   function doPost(e) {
-    const payload = JSON.parse(e.postData.contents);
-    const ss = SpreadsheetApp.openById('PASTE_SHEET_ID');
-    const sh = ss.getSheetByName('Responses') || ss.insertSheet('Responses');
+    var payloadText = (e && e.parameter && e.parameter.data) ? e.parameter.data : (e && e.postData && e.postData.contents) || '{}';
+    var payload = JSON.parse(payloadText);
+
+    var ss = SpreadsheetApp.openById('PASTE_SHEET_ID');
+    var sh = ss.getSheetByName('Responses') || ss.insertSheet('Responses');
     if (sh.getLastRow() === 0) sh.appendRow(Object.keys(payload));
-    sh.appendRow(Object.keys(payload).map(k => Array.isArray(payload[k]) ? payload[k].join(', ') : payload[k]));
-    return ContentService.createTextOutput(JSON.stringify({ ok: true })).setMimeType(ContentService.MimeType.JSON);
+    sh.appendRow(Object.keys(payload).map(function(k){ return Array.isArray(payload[k]) ? payload[k].join(', ') : payload[k]; }));
+
+    return ContentService.createTextOutput(JSON.stringify({ ok: true }))
+      .setMimeType(ContentService.MimeType.JSON);
   }
   -->
 </body>
 </html>
-
-
