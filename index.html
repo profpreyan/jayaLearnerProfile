@@ -261,6 +261,21 @@
       console.error(msg);
     }
 
+  window.addEventListener('error', e => {
+    alert('Boot error: ' + e.message);
+    console.error(e.error || e.message);
+  });
+  try {
+    if (!Array.isArray(QUESTIONS) || QUESTIONS.length === 0) {
+      throw new Error('QUESTIONS missing — check that index.html includes the full script.');
+    }
+    render();
+  } catch (e) {
+    alert('Boot error: ' + e.message);
+    throw e;
+  }
+
+
     function render() {
       if (!Array.isArray(QUESTIONS) || QUESTIONS.length === 0) {
         showFatal('Questions failed to load.');
@@ -556,3 +571,4 @@
   -->
 </body>
 </html>
+
