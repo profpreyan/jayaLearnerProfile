@@ -74,109 +74,129 @@
 
     // ----- Questions -----
     const QUESTIONS = [
-      { id:'name',  title:'Learner name', type:'name',  required:true,  placeholder:'e.g., Jaya' },
-      { id:'email', title:'Email (optional)', type:'email', required:false, placeholder:'name@example.com' },
-      { id:'q1', title:'Hours per week for learning', required:true, type:'single', options:[
-        { value:'<3',  label:'<3 hours', key:'1' },
-        { value:'3–5', label:'3–5 hours', key:'2' },
-        { value:'5–8', label:'5–8 hours', key:'3' },
-        { value:'8+',  label:'8+ hours',  key:'4' },
-      ]},
-      { id:'q2', title:'Typical learning time', required:true, type:'single', options:[
-        { value:'Early morning', label:'Early morning', key:'1' },
-        { value:'Daytime',       label:'Daytime',       key:'2' },
-        { value:'Evenings',      label:'Evenings',      key:'3' },
-        { value:'Weekends only', label:'Weekends only', key:'4' },
-      ]},
-      { id:'q3', title:'What feels most natural?', required:true, type:'single', options:[
-        { value:'Visual/spatial design', label:'Visual/spatial design', key:'1' },
-        { value:'Analytical problem solving', label:'Analytical problem solving', key:'2' },
-        { value:'Hands-on experimentation', label:'Hands-on experimentation', key:'3' },
-        { value:'Communication and teaching', label:'Communication and teaching', key:'4' },
-      ]},
-      { id:'q4', title:'Preferred way to pick up skills', required:true, type:'single', options:[
-        { value:'Formal courses', label:'Formal courses', key:'1' },
-        { value:'Self-study',     label:'Self-study',     key:'2' },
-        { value:'Learning by doing', label:'Learning by doing', key:'3' },
-        { value:'Peers/mentors',  label:'Peers/mentors',  key:'4' },
-      ]},
-      { id:'q5', title:'Deliberately mastered skills', helper:'Select all that apply', required:false, type:'multi', options:[
-        { value:'Software tools',          label:'Software tools',          key:'1' },
-        { value:'Creative design skills',  label:'Creative design skills',  key:'2' },
-        { value:'Communication/presentation', label:'Communication / presentation', key:'3' },
-        { value:'Project management',      label:'Project management',      key:'4' },
-      ]},
-      { id:'q6', title:'AI/software motivation', required:true, type:'single', options:[
-        { value:'Personal mastery and growth', label:'Personal mastery and growth', key:'1' },
-        { value:'Career advancement and income', label:'Career advancement and income', key:'2' },
-        { value:'Recognition from peers/family', label:'Recognition from peers/family', key:'3' },
-        { value:'Teaching and helping others', label:'Teaching and helping others', key:'4' },
-      ]},
-      { id:'q7', title:'Motivation driver', required:true, type:'single', options:[
-        { value:'Curiosity and interest',     label:'Curiosity and interest',     key:'1' },
-        { value:'External deadlines/accountability', label:'External deadlines / accountability', key:'2' },
-        { value:'Visible rewards',            label:'Visible rewards',            key:'3' },
-        { value:'Impact on others',           label:'Impact on others',           key:'4' },
-      ]},
-      { id:'q8', title:'External rewards importance', required:true, type:'single', options:[
-        { value:'1', label:'1 (Not important)', key:'1' },
-        { value:'2', label:'2', key:'2' },
-        { value:'3', label:'3', key:'3' },
-        { value:'4', label:'4', key:'4' },
-        { value:'5', label:'5 (Very important)', key:'5' },
-      ]},
-      { id:'q9', title:'Long-project driver', required:true, type:'single', options:[
-        { value:'Internal commitment',  label:'Internal commitment',  key:'1' },
-        { value:'Small rewards',        label:'Small rewards',        key:'2' },
-        { value:'Mentor/peer check-ins',label:'Mentor / peer check-ins', key:'3' },
-        { value:'Deadlines/structure',  label:'Deadlines / structure', key:'4' },
-      ]},
-      { id:'q10', title:'Goal tracking style', required:true, type:'single', options:[
-        { value:'Self-made schedules',  label:'Self-made schedules',  key:'1' },
-        { value:'Short wins',           label:'Breaking into short wins', key:'2' },
-        { value:'Accountability to others', label:'Accountability to others', key:'3' },
-        { value:'Rewards after completion', label:'Rewards after completion', key:'4' },
-      ]},
-      { id:'q11', title:'Best learning mode', required:true, type:'single', options:[
-        { value:'Reading/writing notes',   label:'Reading / writing notes', key:'1' },
-        { value:'Watching tutorials',      label:'Watching tutorials',      key:'2' },
-        { value:'Practicing hands-on',     label:'Practicing hands-on',     key:'3' },
-        { value:'Explaining/teaching others', label:'Explaining / teaching others', key:'4' },
-      ]},
-      { id:'q12', title:'Learning pace', required:true, type:'single', options:[
-        { value:'Fast immersion',       label:'Fast immersion',       key:'1' },
-        { value:'Gradual step-by-step', label:'Gradual step-by-step', key:'2' },
-      ]},
-      { id:'q13', title:'Preferred setting', required:true, type:'single', options:[
-        { value:'Alone',     label:'Alone',     key:'1' },
-        { value:'With peers',label:'With peers',key:'2' },
-      ]},
-      { id:'q14', title:'Why teach?', required:true, type:'single', options:[
-        { value:'Sharing knowledge',   label:'Sharing knowledge',   key:'1' },
-        { value:'Helping others grow', label:'Helping others grow', key:'2' },
-        { value:'Building reputation', label:'Building reputation', key:'3' },
-        { value:'Creating a community',label:'Creating a community',key:'4' },
-      ]},
-      { id:'q15', title:'Future audience', helper:'Select all that apply', required:false, type:'multi', options:[
-        { value:'Students',     label:'Students (school/college)', key:'1' },
-        { value:'Professionals',label:'Professionals',             key:'2' },
-        { value:'Beginners',    label:'Beginners',                 key:'3' },
-        { value:'Children',     label:'Children',                  key:'4' },
-      ]},
-      { id:'q16', title:'Biggest challenge', required:true, type:'single', options:[
-        { value:'Lack of time',      label:'Lack of time',      key:'1' },
-        { value:'Low confidence',    label:'Low confidence',    key:'2' },
-        { value:'Resources/tools',   label:'Resources / tools', key:'3' },
-        { value:'Staying consistent',label:'Staying consistent',key:'4' },
-      ]},
-      { id:'q17', title:'What helps most', required:true, type:'single', options:[
-        { value:'Personal determination',     label:'Personal determination',     key:'1' },
-        { value:'Support from family/mentors',label:'Support from family / mentors', key:'2' },
-        { value:'Visible progress',           label:'Visible progress',           key:'3' },
-        { value:'Rewards/incentives',         label:'Rewards / incentives',       key:'4' },
-      ]},
-      { id:'q18', title:'1–2 year personal goal (optional)', required:false, type:'text', placeholder:'Short sentence' },
-    ];
+      const QUESTIONS = [
+  { id:'name',  title:'What is your full name?', type:'name', required:true, placeholder:'e.g., Jaya' },
+  { id:'email', title:'What email can we reach you on? (optional)', type:'email', required:false, placeholder:'name@example.com' },
+
+  { id:'q1', title:'How many hours can you realistically spend on learning each week?', required:true, type:'single', options:[
+    { value:'<3',  label:'Less than 3 hours', key:'1' },
+    { value:'3–5', label:'3 to 5 hours', key:'2' },
+    { value:'5–8', label:'5 to 8 hours', key:'3' },
+    { value:'8+',  label:'More than 8 hours', key:'4' },
+  ]},
+
+  { id:'q2', title:'When do you usually prefer to study or practice?', required:true, type:'single', options:[
+    { value:'Early morning', label:'Early morning', key:'1' },
+    { value:'Daytime',       label:'During the day', key:'2' },
+    { value:'Evenings',      label:'Evenings', key:'3' },
+    { value:'Weekends only', label:'Mostly weekends', key:'4' },
+  ]},
+
+  { id:'q3', title:'Which activity feels most natural to you?', required:true, type:'single', options:[
+    { value:'Visual/spatial design', label:'Working with visual or spatial design', key:'1' },
+    { value:'Analytical problem solving', label:'Solving analytical problems', key:'2' },
+    { value:'Hands-on experimentation', label:'Learning by experimenting', key:'3' },
+    { value:'Communication and teaching', label:'Communicating or teaching others', key:'4' },
+  ]},
+
+  { id:'q4', title:'How do you usually prefer to learn new skills?', required:true, type:'single', options:[
+    { value:'Formal courses', label:'Through structured courses', key:'1' },
+    { value:'Self-study',     label:'By studying on your own', key:'2' },
+    { value:'Learning by doing', label:'By practicing directly', key:'3' },
+    { value:'Peers/mentors',  label:'From peers or mentors', key:'4' },
+  ]},
+
+  { id:'q5', title:'Which of these skills have you deliberately worked to master?', helper:'Select all that apply', required:false, type:'multi', options:[
+    { value:'Software tools',          label:'Proficiency in software tools', key:'1' },
+    { value:'Creative design skills',  label:'Creative or design skills', key:'2' },
+    { value:'Communication/presentation', label:'Communication or presentation', key:'3' },
+    { value:'Project management',      label:'Project management', key:'4' },
+  ]},
+
+  { id:'q6', title:'What motivates you most to learn AI or software?', required:true, type:'single', options:[
+    { value:'Personal mastery and growth', label:'Personal growth and mastery', key:'1' },
+    { value:'Career advancement and income', label:'Career or financial growth', key:'2' },
+    { value:'Recognition from peers/family', label:'Recognition from others', key:'3' },
+    { value:'Teaching and helping others', label:'Desire to teach or help others', key:'4' },
+  ]},
+
+  { id:'q7', title:'What usually drives you to keep going?', required:true, type:'single', options:[
+    { value:'Curiosity and interest',     label:'Curiosity and interest', key:'1' },
+    { value:'External deadlines/accountability', label:'External deadlines or accountability', key:'2' },
+    { value:'Visible rewards',            label:'Tangible rewards', key:'3' },
+    { value:'Impact on others',           label:'Knowing it impacts others', key:'4' },
+  ]},
+
+  { id:'q8', title:'How important are external rewards to you?', required:true, type:'single', options:[
+    { value:'1', label:'1 — Not important at all', key:'1' },
+    { value:'2', label:'2', key:'2' },
+    { value:'3', label:'3 — Neutral', key:'3' },
+    { value:'4', label:'4', key:'4' },
+    { value:'5', label:'5 — Very important', key:'5' },
+  ]},
+
+  { id:'q9', title:'What helps you stay on track with long projects?', required:true, type:'single', options:[
+    { value:'Internal commitment',  label:'My own commitment', key:'1' },
+    { value:'Small rewards',        label:'Small milestones and rewards', key:'2' },
+    { value:'Mentor/peer check-ins',label:'Regular check-ins from mentors/peers', key:'3' },
+    { value:'Deadlines/structure',  label:'Clear deadlines and structure', key:'4' },
+  ]},
+
+  { id:'q10', title:'How do you usually like to track your goals?', required:true, type:'single', options:[
+    { value:'Self-made schedules',  label:'With self-made schedules', key:'1' },
+    { value:'Short wins',           label:'Breaking them into short wins', key:'2' },
+    { value:'Accountability to others', label:'By being accountable to others', key:'3' },
+    { value:'Rewards after completion', label:'With rewards after finishing', key:'4' },
+  ]},
+
+  { id:'q11', title:'What learning method works best for you?', required:true, type:'single', options:[
+    { value:'Reading/writing notes',   label:'Reading or writing notes', key:'1' },
+    { value:'Watching tutorials',      label:'Watching tutorials/videos', key:'2' },
+    { value:'Practicing hands-on',     label:'Practicing hands-on', key:'3' },
+    { value:'Explaining/teaching others', label:'Explaining/teaching to others', key:'4' },
+  ]},
+
+  { id:'q12', title:'How do you prefer your learning pace?', required:true, type:'single', options:[
+    { value:'Fast immersion',       label:'Fast immersion', key:'1' },
+    { value:'Gradual step-by-step', label:'Gradual step-by-step', key:'2' },
+  ]},
+
+  { id:'q13', title:'In what setting do you learn best?', required:true, type:'single', options:[
+    { value:'Alone',     label:'Individually', key:'1' },
+    { value:'With peers',label:'Together with peers', key:'2' },
+  ]},
+
+  { id:'q14', title:'Why do you want to teach?', required:true, type:'single', options:[
+    { value:'Sharing knowledge',   label:'To share knowledge', key:'1' },
+    { value:'Helping others grow', label:'To help others grow', key:'2' },
+    { value:'Building reputation', label:'To build my reputation', key:'3' },
+    { value:'Creating a community',label:'To create a community', key:'4' },
+  ]},
+
+  { id:'q15', title:'Who would you like to teach in the future?', helper:'Select all that apply', required:false, type:'multi', options:[
+    { value:'Students',     label:'Students (school/college)', key:'1' },
+    { value:'Professionals',label:'Working professionals', key:'2' },
+    { value:'Beginners',    label:'Adult beginners', key:'3' },
+    { value:'Children',     label:'Children', key:'4' },
+  ]},
+
+  { id:'q16', title:'What do you see as your biggest challenge in learning?', required:true, type:'single', options:[
+    { value:'Lack of time',      label:'Not enough time', key:'1' },
+    { value:'Low confidence',    label:'Low confidence', key:'2' },
+    { value:'Resources/tools',   label:'Lack of resources/tools', key:'3' },
+    { value:'Staying consistent',label:'Staying consistent', key:'4' },
+  ]},
+
+  { id:'q17', title:'What helps you most when you face difficulties?', required:true, type:'single', options:[
+    { value:'Personal determination',     label:'My own determination', key:'1' },
+    { value:'Support from family/mentors',label:'Support from family or mentors', key:'2' },
+    { value:'Visible progress',           label:'Seeing visible progress', key:'3' },
+    { value:'Rewards/incentives',         label:'Getting rewards or incentives', key:'4' },
+  ]},
+
+  { id:'q18', title:'What is your personal learning or career goal for the next 1–2 years? (optional)', required:false, type:'text', placeholder:'Write a short sentence' },
+];
+
 
     // ----- State/refs -----
     let step = 0;
@@ -355,5 +375,6 @@
   -->
 </body>
 </html>
+
 
 
