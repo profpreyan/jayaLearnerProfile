@@ -4,26 +4,16 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Learner Survey — Jaya</title>
-  <!-- Optional: set your Apps Script endpoint here so no code change is needed -->
-  <!-- <meta name="apps-script-url" content="https://script.google.com/macros/s/DEPLOYMENT_ID/exec"> -->
 
-  <!-- Tailwind via CDN for red/black/white theme -->
+  <!-- Use your Apps Script endpoint here -->
+  <meta name="apps-script-url" content="https://script.google.com/macros/s/AKfycbxA42gLgI5E-OAyDXRzYKBrHH2jqw2AtQQn_TpFcmwNm58BdJzn36mSLtstKchob69S/exec">
+
+  <!-- Tailwind CDN: red/black/white -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              red: '#ef4444', // red-500
-            },
-          }
-        }
-      }
-    }
-  </script>
   <style>
-    html, body { height: 100%; background: #000; }
+    html, body { height: 100%; background:#000; }
+    /* rounded card outline */
+    .card-ring { box-shadow: 0 0 0 1px rgba(255,255,255,0.06) inset; border-radius: 1rem; }
   </style>
 </head>
 <body class="text-white">
@@ -31,33 +21,36 @@
   <header class="sticky top-0 z-10 border-b border-neutral-800 bg-black/80 backdrop-blur">
     <div class="mx-auto max-w-3xl px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2">
-        <span class="inline-block h-3 w-3 rounded-full bg-brand-red"></span>
+        <span class="inline-block h-3 w-3 rounded-full bg-red-600"></span>
         <span class="font-semibold tracking-tight">Learner Survey</span>
       </div>
-      <div class="text-xs text-neutral-400">1–9, Enter, ←/→, Space. <span class="hidden sm:inline">Backspace = Back</span></div>
+      <div class="text-xs text-neutral-400">1–9, Enter, ←/→, Space. Backspace = Back</div>
     </div>
     <div class="mx-auto max-w-3xl px-4 pb-3">
       <div class="h-1 w-full bg-neutral-900 rounded overflow-hidden" aria-label="progress" aria-valuemin="0" aria-valuemax="100">
-        <div id="bar" class="h-1 bg-brand-red transition-all duration-200" style="width:0%"></div>
+        <div id="bar" class="h-1 bg-red-600 transition-all duration-200" style="width:0%"></div>
       </div>
-      <div class="mt-2 text-xs text-neutral-400" id="counter">0 / 0</div>
+      <div id="counter" class="mt-2 text-xs text-neutral-400">0 / 0</div>
     </div>
   </header>
 
   <!-- Centered question area -->
   <main class="mx-auto max-w-3xl px-4" style="min-height: calc(100vh - 112px);">
     <div class="grid place-items-center h-full py-6">
-      <section id="card" class="w-full rounded-2xl border border-neutral-800 bg-neutral-950 p-5">
-        <h1 class="text-lg sm:text-xl font-semibold"><span class="text-brand-red mr-2" id="qnum">Q1.</span><span id="qtitle">Loading…</span></h1>
+      <section id="card" class="w-full card-ring bg-neutral-950 p-5">
+        <h1 class="text-lg sm:text-xl font-semibold">
+          <span class="text-red-600 mr-2" id="qnum">Q1.</span><span id="qtitle">Loading…</span>
+        </h1>
         <p id="qhelper" class="text-sm text-neutral-300 mt-1 hidden"></p>
 
         <div id="qbody" class="mt-4"></div>
 
         <div class="mt-8 flex items-center justify-between">
           <button id="backBtn" class="px-4 py-2 rounded-xl border border-neutral-600 text-white hover:bg-neutral-900 disabled:opacity-40">← Back</button>
-          <button id="nextBtn" class="px-4 py-2 rounded-xl bg-brand-red hover:brightness-110 disabled:opacity-50">Next</button>
+          <button id="nextBtn" class="px-4 py-2 rounded-xl bg-red-600 hover:brightness-110 disabled:opacity-50">Next</button>
         </div>
         <p id="reqMsg" class="mt-3 text-sm text-red-400 hidden">This question is required.</p>
+
         <div class="mt-6 grid grid-cols-1 gap-2 text-xs text-neutral-300 sm:grid-cols-3">
           <div>Numbers 1–9: choose option</div>
           <div>Space: select focused radio</div>
@@ -65,168 +58,155 @@
         </div>
       </section>
 
-      <section id="done" class="w-full rounded-2xl border border-neutral-800 bg-neutral-950 p-5 hidden">
-        <h2 class="text-xl font-semibold flex items-center gap-2"><span class="inline-block h-3 w-3 rounded-full bg-brand-red"></span>Saved</h2>
+      <section id="done" class="w-full card-ring bg-neutral-950 p-5 hidden">
+        <h2 class="text-xl font-semibold flex items-center gap-2">
+          <span class="inline-block h-3 w-3 rounded-full bg-red-600"></span>Saved
+        </h2>
         <p class="text-neutral-300 mt-2">Thanks. Your responses are stored.</p>
         <div class="mt-6 flex gap-3">
-          <button id="againBtn" class="px-4 py-2 rounded-xl bg-brand-red hover:brightness-110">Fill again</button>
+          <button id="againBtn" class="px-4 py-2 rounded-xl bg-red-600 hover:brightness-110">Fill again</button>
         </div>
       </section>
     </div>
   </main>
 
   <script>
-    // ---------------- Endpoint resolution (browser-safe) ------------------
-    const PLACEHOLDER_ENDPOINT = "https://script.google.com/macros/s/AKfycbxA42gLgI5E-OAyDXRzYKBrHH2jqw2AtQQn_TpFcmwNm58BdJzn36mSLtstKchob69S/exec";
-
-    function resolveEndpointFrom(env) {
-      const w = env.win, d = env.doc;
-      if (w && w.__APPS_SCRIPT_URL__) return String(w.__APPS_SCRIPT_URL__);
-      if (d && d.querySelector) {
-        const meta = d.querySelector('meta[name="apps-script-url"]');
-        if (meta && meta.content) return String(meta.content);
-      }
-      if (w && w.location && w.location.href) {
-        try {
-          const url = new URL(w.location.href);
-          const qp = url.searchParams.get('endpoint') || url.searchParams.get('appsScriptUrl');
-          if (qp) return qp;
-        } catch {}
-      }
-      try {
-        const ls = w && w.localStorage && w.localStorage.getItem ? w.localStorage.getItem('APPS_SCRIPT_URL') : null;
-        if (ls) return String(ls);
-      } catch {}
-      return PLACEHOLDER_ENDPOINT;
+    // ---------- Endpoint (no CORS preflight) ----------
+    const PLACEHOLDER_ENDPOINT =
+      "https://script.google.com/macros/s/YOUR_APPS_SCRIPT_DEPLOYMENT_ID/exec";
+    function endpoint() {
+      const meta = document.querySelector('meta[name="apps-script-url"]');
+      return meta && meta.content ? meta.content : PLACEHOLDER_ENDPOINT;
     }
-    function resolveEndpoint() {
-      return resolveEndpointFrom({ win: window, doc: document });
-    }
-    const APPS_SCRIPT_URL = resolveEndpoint();
+    const APPS_SCRIPT_URL = endpoint();
 
-    // ---------------- Survey model ----------------------------------------
+    // ---------- Questions ----------
     const QUESTIONS = [
-      { id: 'name', title: 'Learner name', type: 'name', required: true, placeholder: 'e.g., Jaya' },
-      { id: 'email', title: 'Email (optional)', type: 'email', required: false, placeholder: 'name@example.com' },
-      { id: 'q1', title: 'Hours per week for learning', required: true, type: 'single', options: [
-        { value: '<3', label: '<3 hours', key: '1' },
-        { value: '3–5', label: '3–5 hours', key: '2' },
-        { value: '5–8', label: '5–8 hours', key: '3' },
-        { value: '8+', label: '8+ hours', key: '4' },
+      { id:'name',  title:'Learner name', type:'name',  required:true,  placeholder:'e.g., Jaya' },
+      { id:'email', title:'Email (optional)', type:'email', required:false, placeholder:'name@example.com' },
+      { id:'q1', title:'Hours per week for learning', required:true, type:'single', options:[
+        { value:'<3',  label:'<3 hours', key:'1' },
+        { value:'3–5', label:'3–5 hours', key:'2' },
+        { value:'5–8', label:'5–8 hours', key:'3' },
+        { value:'8+',  label:'8+ hours',  key:'4' },
       ]},
-      { id: 'q2', title: 'Typical learning time', required: true, type: 'single', options: [
-        { value: 'Early morning', label: 'Early morning', key: '1' },
-        { value: 'Daytime', label: 'Daytime', key: '2' },
-        { value: 'Evenings', label: 'Evenings', key: '3' },
-        { value: 'Weekends only', label: 'Weekends only', key: '4' },
+      { id:'q2', title:'Typical learning time', required:true, type:'single', options:[
+        { value:'Early morning', label:'Early morning', key:'1' },
+        { value:'Daytime',       label:'Daytime',       key:'2' },
+        { value:'Evenings',      label:'Evenings',      key:'3' },
+        { value:'Weekends only', label:'Weekends only', key:'4' },
       ]},
-      { id: 'q3', title: 'What feels most natural?', required: true, type: 'single', options: [
-        { value: 'Visual/spatial design', label: 'Visual/spatial design', key: '1' },
-        { value: 'Analytical problem solving', label: 'Analytical problem solving', key: '2' },
-        { value: 'Hands-on experimentation', label: 'Hands-on experimentation', key: '3' },
-        { value: 'Communication and teaching', label: 'Communication and teaching', key: '4' },
+      { id:'q3', title:'What feels most natural?', required:true, type:'single', options:[
+        { value:'Visual/spatial design',   label:'Visual/spatial design',   key:'1' },
+        { value:'Analytical problem solving', label:'Analytical problem solving', key:'2' },
+        { value:'Hands-on experimentation', label:'Hands-on experimentation', key:'3' },
+        { value:'Communication and teaching', label:'Communication and teaching', key:'4' },
       ]},
-      { id: 'q4', title: 'Preferred way to pick up skills', required: true, type: 'single', options: [
-        { value: 'Formal courses', label: 'Formal courses', key: '1' },
-        { value: 'Self-study', label: 'Self-study', key: '2' },
-        { value: 'Learning by doing', label: 'Learning by doing', key: '3' },
-        { value: 'Peers/mentors', label: 'Peers/mentors', key: '4' },
+      { id:'q4', title:'Preferred way to pick up skills', required:true, type:'single', options:[
+        { value:'Formal courses', label:'Formal courses', key:'1' },
+        { value:'Self-study',     label:'Self-study',     key:'2' },
+        { value:'Learning by doing', label:'Learning by doing', key:'3' },
+        { value:'Peers/mentors',  label:'Peers/mentors',  key:'4' },
       ]},
-      { id: 'q5', title: 'Deliberately mastered skills', helper: 'Select all that apply', required: false, type: 'multi', options: [
-        { value: 'Software tools', label: 'Software tools', key: '1' },
-        { value: 'Creative design skills', label: 'Creative design skills', key: '2' },
-        { value: 'Communication/presentation', label: 'Communication / presentation', key: '3' },
-        { value: 'Project management', label: 'Project management', key: '4' },
+      { id:'q5', title:'Deliberately mastered skills', helper:'Select all that apply', required:false, type:'multi', options:[
+        { value:'Software tools',          label:'Software tools',          key:'1' },
+        { value:'Creative design skills',  label:'Creative design skills',  key:'2' },
+        { value:'Communication/presentation', label:'Communication / presentation', key:'3' },
+        { value:'Project management',      label:'Project management',      key:'4' },
       ]},
-      { id: 'q6', title: 'AI/software motivation', required: true, type: 'single', options: [
-        { value: 'Personal mastery and growth', label: 'Personal mastery and growth', key: '1' },
-        { value: 'Career advancement and income', label: 'Career advancement and income', key: '2' },
-        { value: 'Recognition from peers/family', label: 'Recognition from peers/family', key: '3' },
-        { value: 'Teaching and helping others', label: 'Teaching and helping others', key: '4' },
+      { id:'q6', title:'AI/software motivation', required:true, type:'single', options:[
+        { value:'Personal mastery and growth', label:'Personal mastery and growth', key:'1' },
+        { value:'Career advancement and income', label:'Career advancement and income', key:'2' },
+        { value:'Recognition from peers/family', label:'Recognition from peers/family', key:'3' },
+        { value:'Teaching and helping others', label:'Teaching and helping others', key:'4' },
       ]},
-      { id: 'q7', title: 'Motivation driver', required: true, type: 'single', options: [
-        { value: 'Curiosity and interest', label: 'Curiosity and interest', key: '1' },
-        { value: 'External deadlines/accountability', label: 'External deadlines / accountability', key: '2' },
-        { value: 'Visible rewards', label: 'Visible rewards', key: '3' },
-        { value: 'Impact on others', label: 'Impact on others', key: '4' },
+      { id:'q7', title:'Motivation driver', required:true, type:'single', options:[
+        { value:'Curiosity and interest',     label:'Curiosity and interest',     key:'1' },
+        { value:'External deadlines/accountability', label:'External deadlines / accountability', key:'2' },
+        { value:'Visible rewards',            label:'Visible rewards',            key:'3' },
+        { value:'Impact on others',           label:'Impact on others',           key:'4' },
       ]},
-      { id: 'q8', title: 'External rewards importance', required: true, type: 'single', options: [
-        { value: '1', label: '1 (Not important)', key: '1' },
-        { value: '2', label: '2', key: '2' },
-        { value: '3', label: '3', key: '3' },
-        { value: '4', label: '4', key: '4' },
-        { value: '5', label: '5 (Very important)', key: '5' },
+      { id:'q8', title:'External rewards importance', required:true, type:'single', options:[
+        { value:'1', label:'1 (Not important)', key:'1' },
+        { value:'2', label:'2', key:'2' },
+        { value:'3', label:'3', key:'3' },
+        { value:'4', label:'4', key:'4' },
+        { value:'5', label:'5 (Very important)', key:'5' },
       ]},
-      { id: 'q9', title: 'Long-project driver', required: true, type: 'single', options: [
-        { value: 'Internal commitment', label: 'Internal commitment', key: '1' },
-        { value: 'Small rewards', label: 'Small rewards', key: '2' },
-        { value: 'Mentor/peer check-ins', label: 'Mentor / peer check-ins', key: '3' },
-        { value: 'Deadlines/structure', label: 'Deadlines / structure', key: '4' },
+      { id:'q9', title:'Long-project driver', required:true, type:'single', options:[
+        { value:'Internal commitment',  label:'Internal commitment',  key:'1' },
+        { value:'Small rewards',        label:'Small rewards',        key:'2' },
+        { value:'Mentor/peer check-ins',label:'Mentor / peer check-ins', key:'3' },
+        { value:'Deadlines/structure',  label:'Deadlines / structure', key:'4' },
       ]},
-      { id: 'q10', title: 'Goal tracking style', required: true, type: 'single', options: [
-        { value: 'Self-made schedules', label: 'Self-made schedules', key: '1' },
-        { value: 'Short wins', label: 'Breaking into short wins', key: '2' },
-        { value: 'Accountability to others', label: 'Accountability to others', key: '3' },
-        { value: 'Rewards after completion', label: 'Rewards after completion', key: '4' },
+      { id:'q10', title:'Goal tracking style', required:true, type:'single', options:[
+        { value:'Self-made schedules',  label:'Self-made schedules',  key:'1' },
+        { value:'Short wins',           label:'Breaking into short wins', key:'2' },
+        { value:'Accountability to others', label:'Accountability to others', key:'3' },
+        { value:'Rewards after completion', label:'Rewards after completion', key:'4' },
       ]},
-      { id: 'q11', title: 'Best learning mode', required: true, type: 'single', options: [
-        { value: 'Reading/writing notes', label: 'Reading / writing notes', key: '1' },
-        { value: 'Watching tutorials', label: 'Watching tutorials', key: '2' },
-        { value: 'Practicing hands-on', label: 'Practicing hands-on', key: '3' },
-        { value: 'Explaining/teaching others', label: 'Explaining / teaching others', key: '4' },
+      { id:'q11', title:'Best learning mode', required:true, type:'single', options:[
+        { value:'Reading/writing notes',   label:'Reading / writing notes', key:'1' },
+        { value:'Watching tutorials',      label:'Watching tutorials',      key:'2' },
+        { value:'Practicing hands-on',     label:'Practicing hands-on',     key:'3' },
+        { value:'Explaining/teaching others', label:'Explaining / teaching others', key:'4' },
       ]},
-      { id: 'q12', title: 'Learning pace', required: true, type: 'single', options: [
-        { value: 'Fast immersion', label: 'Fast immersion', key: '1' },
-        { value: 'Gradual step-by-step', label: 'Gradual step-by-step', key: '2' },
+      { id:'q12', title:'Learning pace', required:true, type:'single', options:[
+        { value:'Fast immersion',       label:'Fast immersion',       key:'1' },
+        { value:'Gradual step-by-step', label:'Gradual step-by-step', key:'2' },
       ]},
-      { id: 'q13', title: 'Preferred setting', required: true, type: 'single', options: [
-        { value: 'Alone', label: 'Alone', key: '1' },
-        { value: 'With peers', label: 'With peers', key: '2' },
+      { id:'q13', title:'Preferred setting', required:true, type:'single', options:[
+        { value:'Alone',     label:'Alone',     key:'1' },
+        { value:'With peers',label:'With peers',key:'2' },
       ]},
-      { id: 'q14', title: 'Why teach?', required: true, type: 'single', options: [
-        { value: 'Sharing knowledge', label: 'Sharing knowledge', key: '1' },
-        { value: 'Helping others grow', label: 'Helping others grow', key: '2' },
-        { value: 'Building reputation', label: 'Building reputation', key: '3' },
-        { value: 'Creating a community', label: 'Creating a community', key: '4' },
+      { id:'q14', title:'Why teach?', required:true, type:'single', options:[
+        { value:'Sharing knowledge',   label:'Sharing knowledge',   key:'1' },
+        { value:'Helping others grow', label:'Helping others grow', key:'2' },
+        { value:'Building reputation', label:'Building reputation', key:'3' },
+        { value:'Creating a community',label:'Creating a community',key:'4' },
       ]},
-      { id: 'q15', title: 'Future audience', helper: 'Select all that apply', required: false, type: 'multi', options: [
-        { value: 'Students', label: 'Students (school/college)', key: '1' },
-        { value: 'Professionals', label: 'Professionals', key: '2' },
-        { value: 'Beginners', label: 'Beginners', key: '3' },
-        { value: 'Children', label: 'Children', key: '4' },
+      { id:'q15', title:'Future audience', helper:'Select all that apply', required:false, type:'multi', options:[
+        { value:'Students',     label:'Students (school/college)', key:'1' },
+        { value:'Professionals',label:'Professionals',             key:'2' },
+        { value:'Beginners',    label:'Beginners',                 key:'3' },
+        { value:'Children',     label:'Children',                  key:'4' },
       ]},
-      { id: 'q16', title: 'Biggest challenge', required: true, type: 'single', options: [
-        { value: 'Lack of time', label: 'Lack of time', key: '1' },
-        { value: 'Low confidence', label: 'Low confidence', key: '2' },
-        { value: 'Resources/tools', label: 'Resources / tools', key: '3' },
-        { value: 'Staying consistent', label: 'Staying consistent', key: '4' },
+      { id:'q16', title:'Biggest challenge', required:true, type:'single', options:[
+        { value:'Lack of time',      label:'Lack of time',      key:'1' },
+        { value:'Low confidence',    label:'Low confidence',    key:'2' },
+        { value:'Resources/tools',   label:'Resources / tools', key:'3' },
+        { value:'Staying consistent',label:'Staying consistent',key:'4' },
       ]},
-      { id: 'q17', title: 'What helps most', required: true, type: 'single', options: [
-        { value: 'Personal determination', label: 'Personal determination', key: '1' },
-        { value: 'Support from family/mentors', label: 'Support from family / mentors', key: '2' },
-        { value: 'Visible progress', label: 'Visible progress', key: '3' },
-        { value: 'Rewards/incentives', label: 'Rewards / incentives', key: '4' },
+      { id:'q17', title:'What helps most', required:true, type:'single', options:[
+        { value:'Personal determination',     label:'Personal determination',     key:'1' },
+        { value:'Support from family/mentors',label:'Support from family / mentors', key:'2' },
+        { value:'Visible progress',           label:'Visible progress',           key:'3' },
+        { value:'Rewards/incentives',         label:'Rewards / incentives',       key:'4' },
       ]},
-      { id: 'q18', title: '1–2 year personal goal (optional)', required: false, type: 'text', placeholder: 'Short sentence' },
+      { id:'q18', title:'1–2 year personal goal (optional)', required:false, type:'text', placeholder:'Short sentence' },
     ];
 
-    // ---------------- State -------------------------------------------------
-    let step = 0; // index in QUESTIONS
+    // ---------- State ----------
+    let step = 0;
     const values = {}; // id -> value or array
 
-    // ---------------- DOM refs --------------------------------------------
-    const qnum = document.getElementById('qnum');
-    const qtitle = document.getElementById('qtitle');
-    const qhelper = document.getElementById('qhelper');
-    const qbody = document.getElementById('qbody');
-    const bar = document.getElementById('bar');
-    const counter = document.getElementById('counter');
-    const nextBtn = document.getElementById('nextBtn');
-    const backBtn = document.getElementById('backBtn');
-    const reqMsg = document.getElementById('reqMsg');
-    const card = document.getElementById('card');
-    const done = document.getElementById('done');
+    // ---------- DOM ----------
+    const qnum     = document.getElementById('qnum');
+    const qtitle   = document.getElementById('qtitle');
+    const qhelper  = document.getElementById('qhelper');
+    const qbody    = document.getElementById('qbody');
+    const bar      = document.getElementById('bar');
+    const counter  = document.getElementById('counter');
+    const nextBtn  = document.getElementById('nextBtn');
+    const backBtn  = document.getElementById('backBtn');
+    const reqMsg   = document.getElementById('reqMsg');
+    const card     = document.getElementById('card');
+    const done     = document.getElementById('done');
     const againBtn = document.getElementById('againBtn');
+
+    // ---------- Helpers ----------
+    function setValue(id, v) { values[id] = v; }
+    function getValue(id)    { return values[id]; }
 
     function updateProgress() {
       const pct = Math.round((step / QUESTIONS.length) * 100);
@@ -235,26 +215,23 @@
       counter.textContent = (step + 1) + ' / ' + QUESTIONS.length;
     }
 
-    function setValue(id, v) { values[id] = v; }
-    function getValue(id) { return values[id]; }
-
     function canNext(q) {
       if (!q.required) return true;
       const v = getValue(q.id);
       if (q.type === 'single' || q.type === 'name' || q.type === 'email' || q.type === 'text') {
         return !!v && (typeof v === 'string' ? v.trim().length > 0 : true);
       }
-      if (q.type === 'multi') {
-        return Array.isArray(v) && v.length > 0;
-      }
+      if (q.type === 'multi') return Array.isArray(v) && v.length > 0;
       return false;
     }
 
+    // ---------- Render ----------
     function render() {
       const q = QUESTIONS[step];
       qnum.textContent = 'Q' + (step + 1) + '.';
       qtitle.textContent = q.title;
-      if (q.helper) { qhelper.textContent = q.helper; qhelper.classList.remove('hidden'); } else { qhelper.classList.add('hidden'); }
+      if (q.helper) { qhelper.textContent = q.helper; qhelper.classList.remove('hidden'); }
+      else { qhelper.classList.add('hidden'); }
 
       qbody.innerHTML = '';
       reqMsg.classList.add('hidden');
@@ -266,7 +243,7 @@
         q.options.forEach((o, i) => {
           const id = q.id + '-' + i;
           const label = document.createElement('label');
-          label.className = 'flex items-center gap-3 rounded-xl border p-3 border-neutral-700 bg-black hover:border-neutral-500 focus-within:border-brand-red';
+          label.className = 'flex items-center gap-3 rounded-xl border p-3 border-neutral-700 bg-black hover:border-neutral-500 focus-within:border-red-600';
 
           const input = document.createElement('input');
           input.type = 'radio';
@@ -274,7 +251,7 @@
           input.id = id;
           input.value = o.value;
           input.checked = getValue(q.id) === o.value;
-          input.className = 'h-4 w-4 accent-brand-red';
+          input.className = 'h-4 w-4 accent-red-600';
           input.addEventListener('change', () => { setValue(q.id, o.value); updateNav(); });
 
           const txtWrap = document.createElement('div');
@@ -304,7 +281,7 @@
           const checked = arr.includes(o.value);
           const btn = document.createElement('button');
           btn.type = 'button';
-          btn.className = 'flex items-center justify-between rounded-xl border p-3 text-left border-neutral-700 bg-black hover:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-brand-red ' + (checked ? 'border-brand-red' : '');
+          btn.className = 'flex items-center justify-between rounded-xl border p-3 text-left border-neutral-700 bg-black hover:border-neutral-500 focus:outline-none focus:ring-2 focus:ring-red-600 ' + (checked ? 'border-red-600' : '');
           btn.innerHTML = `<span class="text-white">${o.label}</span><span class="ml-2 rounded bg-neutral-800 px-1.5 py-0.5 text-[11px] text-neutral-200">${o.key||''}</span>`;
           btn.addEventListener('click', () => {
             const cur = Array.isArray(getValue(q.id)) ? getValue(q.id) : [];
@@ -323,7 +300,7 @@
         input.type = q.type === 'email' ? 'email' : 'text';
         input.placeholder = q.placeholder || '';
         input.value = getValue(q.id) || '';
-        input.className = 'w-full rounded-xl border border-neutral-700 bg-black p-3 text-white placeholder-neutral-400 focus:border-brand-red focus:outline-none';
+        input.className = 'w-full rounded-xl border border-neutral-700 bg-black p-3 text-white placeholder-neutral-400 focus:border-red-600 focus:outline-none';
         input.addEventListener('input', (e) => setValue(q.id, e.target.value));
         input.addEventListener('keydown', (e) => {
           if (e.key === 'Enter' && canNext(q)) { e.preventDefault(); onNext(); }
@@ -337,6 +314,7 @@
       updateNav();
     }
 
+    // ---------- Nav ----------
     function updateNav() {
       const q = QUESTIONS[step];
       const ok = canNext(q);
@@ -354,15 +332,15 @@
     }
     function onBack() { if (step > 0) { step--; render(); } }
 
+    // ---------- Submit (avoid preflight) ----------
     async function submit() {
       if (APPS_SCRIPT_URL.includes('YOUR_APPS_SCRIPT_DEPLOYMENT_ID')) {
-        alert('Missing Apps Script endpoint. Add window.__APPS_SCRIPT_URL__ or meta[name=apps-script-url].');
+        alert('Missing Apps Script endpoint.');
         return;
       }
       const payload = { ...values, timestamp: new Date().toISOString() };
       try {
         nextBtn.disabled = true;
-        // Avoid CORS preflight by sending URL-encoded form data (simple request)
         const formBody = new URLSearchParams({ data: JSON.stringify(payload) }).toString();
         const res = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
@@ -378,31 +356,18 @@
         nextBtn.disabled = false;
       }
     }
-      const payload = { ...values, timestamp: new Date().toISOString() };
-      try {
-        nextBtn.disabled = true;
-        const res = await fetch(APPS_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) });
-        if (!res.ok) throw new Error('HTTP ' + res.status);
-        card.classList.add('hidden');
-        done.classList.remove('hidden');
-      } catch (e) {
-        alert('Save failed. Check endpoint and CORS.');
-      } finally {
-        nextBtn.disabled = false;
-      }
-    }
 
-    // Keyboard shortcuts
+    // ---------- Shortcuts ----------
     window.addEventListener('keydown', (e) => {
       const q = QUESTIONS[step];
-      // permit Enter in text/email handled by field listener
       const tag = (e.target && e.target.tagName) || '';
       const typing = (tag === 'INPUT' || tag === 'TEXTAREA');
+
       if (!typing) {
         if (e.key === 'ArrowRight') { e.preventDefault(); onNext(); return; }
-        if (e.key === 'ArrowLeft') { e.preventDefault(); onBack(); return; }
-        if (e.key === 'Enter') { e.preventDefault(); onNext(); return; }
-        if (e.key === 'Backspace') { e.preventDefault(); onBack(); return; }
+        if (e.key === 'ArrowLeft')  { e.preventDefault(); onBack(); return; }
+        if (e.key === 'Enter')      { e.preventDefault(); onNext(); return; }
+        if (e.key === 'Backspace')  { e.preventDefault(); onBack(); return; }
       }
 
       if (q.options) {
@@ -419,57 +384,33 @@
       }
     });
 
-    // Buttons
+    // ---------- Buttons ----------
     nextBtn.addEventListener('click', onNext);
     backBtn.addEventListener('click', onBack);
-    againBtn.addEventListener('click', () => { step = 0; for (const k in values) delete values[k]; done.classList.add('hidden'); card.classList.remove('hidden'); render(); });
+    againBtn.addEventListener('click', () => {
+      step = 0; for (const k in values) delete values[k];
+      done.classList.add('hidden'); card.classList.remove('hidden'); render();
+    });
 
-    // Initial render
+    // ---------- Init ----------
     render();
-
-    // ---------------- Dev tests (run with ?test=1) -------------------------
-    function runDevTests() {
-      const fakeWin = (href, extra={}) => ({ location: { href }, ...extra });
-      const fakeDoc = (content) => ({ querySelector: () => (content ? { content } : null) });
-      const cases = [
-        { name: 'window var wins', env: { win: fakeWin('https://x', { __APPS_SCRIPT_URL__: 'A' }) }, expect: 'A' },
-        { name: 'meta second', env: { win: fakeWin('https://x'), doc: fakeDoc('B') }, expect: 'B' },
-        { name: 'query param third', env: { win: fakeWin('https://x?endpoint=C') }, expect: 'C' },
-        { name: 'localStorage fourth', env: { win: fakeWin('https://x', { localStorage: { getItem: () => 'D' } }) }, expect: 'D' },
-        { name: 'fallback placeholder', env: { win: fakeWin('https://x'), doc: fakeDoc() }, expect: PLACEHOLDER_ENDPOINT },
-        { name: 'alias param', env: { win: fakeWin('https://x?appsScriptUrl=E') }, expect: 'E' },
-      ];
-      cases.forEach(t => {
-        const got = resolveEndpointFrom(t.env);
-        console.assert(got === t.expect, `${t.name}: expected ${t.expect}, got ${got}`);
-      });
-      // Shortcut uniqueness
-      QUESTIONS.forEach(q => {
-        if (!q.options) return;
-        const keys = q.options.map(o => o.key).filter(Boolean);
-        const uniq = new Set(keys);
-        console.assert(uniq.size === keys.length, 'duplicate keys in ' + q.id);
-      });
-      console.log('dev tests passed');
-    }
-
-    try {
-      const u = new URL(window.location.href);
-      if (u.searchParams.get('test') === '1') runDevTests();
-    } catch {}
   </script>
 
-  <!-- NOTE: Your Apps Script must accept POST form data. Example:
+  <!-- Apps Script handler (form-encoded):
   function doPost(e) {
-    var payloadText = (e && e.parameter && e.parameter.data) ? e.parameter.data : (e && e.postData && e.postData.contents) || '{}';
+    var payloadText = (e && e.parameter && e.parameter.data)
+      ? e.parameter.data
+      : (e && e.postData && e.postData.contents) || '{}';
     var payload = JSON.parse(payloadText);
 
     var ss = SpreadsheetApp.openById('PASTE_SHEET_ID');
     var sh = ss.getSheetByName('Responses') || ss.insertSheet('Responses');
     if (sh.getLastRow() === 0) sh.appendRow(Object.keys(payload));
-    sh.appendRow(Object.keys(payload).map(function(k){ return Array.isArray(payload[k]) ? payload[k].join(', ') : payload[k]; }));
+    sh.appendRow(Object.keys(payload).map(function(k){
+      return Array.isArray(payload[k]) ? payload[k].join(', ') : payload[k];
+    }));
 
-    return ContentService.createTextOutput(JSON.stringify({ ok: true }))
+    return ContentService.createTextOutput(JSON.stringify({ ok:true }))
       .setMimeType(ContentService.MimeType.JSON);
   }
   -->
